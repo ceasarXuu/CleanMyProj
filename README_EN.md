@@ -2,27 +2,32 @@
 
 ---
 
-# CleanMyProj (cmp)
+<div align="center">
 
-<p align="center">
-  <b>Project Cache Cleanup CLI Tool</b><br>
-  Auto-detect project type · Scan cache usage · Interactive cleanup · Safe trash recovery
-</p>
+# CleanMyProj
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Node.js-16+-339933?logo=node.js&logoColor=white" alt="Node.js">
-  <img src="https://img.shields.io/badge/npm-8+-CB3837?logo=npm&logoColor=white" alt="npm">
-  <img src="https://img.shields.io/badge/license-MIT-blue" alt="License">
-</p>
+**One command to clean project caches and free up disk space**
 
-## Features
+[![npm version](https://img.shields.io/npm/v/cleanmyproj?logo=npm&color=CB3837)](https://www.npmjs.com/package/cleanmyproj)
+[![npm downloads](https://img.shields.io/npm/dm/cleanmyproj?logo=npm)](https://www.npmjs.com/package/cleanmyproj)
+[![license](https://img.shields.io/github/license/ceasarXuu/CleanMyProj)](https://github.com/ceasarXuu/CleanMyProj/blob/main/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/ceasarXuu/CleanMyProj?style=social)](https://github.com/ceasarXuu/CleanMyProj)
 
-- 🔍 **Smart Detection** — Auto-identify project type (Next.js / Vue / Python / Rust / Go and 14+ more)
-- 📊 **Cache Scanning** — Recursively calculate cache directory sizes, sorted by usage
-- ☑️ **Interactive Selection** — Checkbox list with "Select All", check items as needed
-- 🛡️ **Double Confirmation** — Two-step Enter confirmation to prevent accidental deletion
-- 🗑️ **Safe Deletion** — All files moved to system trash/recycle bin, fully recoverable
-- ⚡ **Zero Config** — No configuration files needed, works out of the box
+Auto-detect project type · Scan cache usage · Interactive selection · Safe trash recovery
+
+</div>
+
+---
+
+## Why CleanMyProj
+
+Over time, `node_modules`, `.next`, `__pycache__`, `target` and other caches pile up across your projects, eating disk space. Finding and removing them manually is tedious and risky.
+
+**CleanMyProj** helps you:
+
+- Scan all cleanable caches with a single command
+- Sort by size so you know what's hogging space
+- Move selected items to system trash (not permanent deletion)
 
 ## Install
 
@@ -30,15 +35,15 @@
 npm install -g cleanmyproj
 ```
 
-## Quick Start
+## Usage
 
-Run in your project root directory:
+Run in any project root directory:
 
 ```bash
 cmp
 ```
 
-Terminal output example:
+### Example Output
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -53,112 +58,99 @@ Terminal output example:
 
 ? Select items to clean (Space to toggle, Enter to confirm):
  ◻ ✦ Select All (All) — Total: 2.37 GB
- ◻   .next (Next.js build cache)                   1.24 GB
+ ◻   .next (Next.js build cache)                    1.24 GB
  ◻   node_modules                                   890.52 MB
  ◻   node_modules/.vite (Vite cache)               156.30 MB
- ◻   .eslintcache                                   12.80 MB
- ◻   node_modules/.cache (Webpack/Babel)             8.45 MB
+ ◻   .eslintcache                                    12.80 MB
+ ◻   node_modules/.cache (Webpack/Babel)              8.45 MB
 ```
 
-## Commands
+### Commands
 
 ```bash
-cmp [path]              # Scan and interactive cleanup (path defaults to cwd)
-cmp --check             # Scan only, skip interactive cleanup
-cmp --yes               # Skip confirmation, clean immediately (use with caution)
-cmp --help              # Show help
-cmp --version           # Show version
+cmp                     # Current dir: scan → select → clean
+cmp /path/to/project    # Specify project path
+cmp --check             # Scan only, no interactive cleanup
+cmp --yes               # Skip confirmation, clean immediately
 ```
 
-## Interactive Flow
+### Controls
 
-```
-┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐
-│ Project Detection │ ──▶ │  Cache Scanning   │ ──▶ │ Select Items     │
-└──────────────────┘     └──────────────────┘     └────────┬─────────┘
-                                                           │
-                    ┌──────────────────┐     ┌────────────▼────────────┐
-                    │  Safe Deletion    │ ◀── │ Double Confirmation (×2)│
-                    │ (Move to Trash)   │     └─────────────────────────┘
-                    └──────────────────┘
-```
+| Key | Action |
+|-----|--------|
+| `Space` | Toggle selection |
+| `↑ ↓` | Navigate |
+| `Enter` | Confirm |
 
-1. **Project Detection** — Auto-identify project type and frameworks used
-2. **Cache Scanning** — Calculate disk usage of each cache directory
-3. **Select Items** — Checkbox list, toggle with Spacebar, confirm with Enter
-   - `✦ Select All` — Checking this selects all items below
-4. **Double Confirmation** — First Enter shows a warning listing items to delete; second Enter executes
-5. **Safe Deletion** — All files moved to system trash (not permanently deleted)
+After selection, there are **two confirmation steps**:
 
-## Supported Project Types & Cache Targets
+1. First Enter → shows a list of items to be deleted, asks for confirmation
+2. Second Enter → executes cleanup, files moved to system trash
 
-| Project Type | Cleanable Caches |
-|-------------|-----------------|
-| **Node.js (General)** | `node_modules`, npm/yarn/pnpm cache, `node_modules/.cache`, `.eslintcache`, `tsbuildinfo` |
+## Supported Project Types
+
+| Type | Cleanable Targets |
+|------|------------------|
+| **Node.js** | `node_modules`, npm / yarn / pnpm cache, `node_modules/.cache`, `.eslintcache` |
 | **Next.js** | `.next` build cache |
 | **Nuxt** | `.nuxt`, `.output` |
 | **Vite** | `node_modules/.vite` |
-| **Gatsby** | `.cache`, `public` |
+| **Vue / Svelte** | `dist`, `.svelte-kit` |
 | **Angular** | `.angular`, `dist` |
-| **SvelteKit** | `.svelte-kit` |
-| **Python** | `__pycache__`, `.venv`, pip cache, `.eggs` |
+| **Gatsby** | `.cache`, `public` |
+| **Python** | `__pycache__`, `.venv`, pip cache |
 | **Rust** | `target/`, cargo registry |
 | **Go** | build cache, module cache |
 | **Flutter** | `build/`, `.dart_tool`, pub cache |
-| **Java / Gradle / Maven** | `build/`, `target/`, gradle cache, maven repo |
-| **Docker** | docker system prune (images / containers / volumes) |
+| **Java** | `build/`, `target/`, Gradle cache, Maven repo |
+| **Docker** | unused images, containers, volumes |
 | **Turborepo** | `.turbo` local cache |
-
-## Project Structure
-
-```
-CleanMyProj/
-├── bin/cmp.js          # CLI entry point
-├── src/
-│   ├── types.ts        # Type definitions
-│   ├── utils.ts        # Utilities (size formatting, dir size calculation)
-│   ├── detectors.ts    # Project type detector
-│   ├── scanners.ts     # Cache scanner
-│   ├── cleaner.ts      # Safe cleanup (trash)
-│   ├── ui.ts           # Interactive UI (checklist + double confirmation)
-│   └── index.ts        # CLI main flow
-├── dist/               # Compiled output
-├── package.json
-└── tsconfig.json
-```
 
 ## Safety
 
-- ✅ All deleted files go to **system trash** (macOS Trash / Windows Recycle Bin / Linux Trash)
-- ✅ Accidentally deleted files can be recovered from trash manually
-- ✅ All options are **unchecked** by default — you choose what to clean
-- ✅ **Two confirmation steps** before any deletion occurs
-- ✅ Never touches source code or config files — only cache and build artifacts
-
-## Development
-
-```bash
-git clone <repo-url>
-cd CleanMyProj
-npm install
-npm run build
-
-# Test
-node dist/index.js --check        # Check current project
-node dist/index.js /path/to/proj  # Check a specific project
-```
+| Feature | Detail |
+|---------|--------|
+| 🗑️ Trash only | All files go to system trash (macOS Trash / Windows Recycle Bin / Linux Trash), fully recoverable |
+| ☑️ Opt-in | Everything is unchecked by default — you decide what to clean |
+| 🔒 Double confirm | Two confirmation steps before any deletion |
+| 🚫 Source-safe | Only cache directories and build artifacts are targeted, never source code |
 
 ## FAQ
 
-**Q: Can deleted files be recovered?**
-A: Yes. All files are moved to the system trash/recycle bin. Open trash and restore manually.
+<details>
+<summary>Can I recover deleted files?</summary>
 
-**Q: Does it support monorepos?**
-A: Yes. Run `cmp` in the monorepo root and it will scan all sub-project caches.
+Yes. All deletions are actually "move to trash" operations. Open your system's trash/recycle bin to restore.
+</details>
 
-**Q: Will it delete my source code?**
-A: No. Only cache directories and build artifacts are cleaned. Source code is never touched.
+<details>
+<summary>Does it support monorepos?</summary>
+
+Yes. Run `cmp` at the monorepo root and it will scan all sub-project caches.
+</details>
+
+<details>
+<summary>Will it delete my source code?</summary>
+
+No. CleanMyProj only targets predefined cache directories (`node_modules`, `.next`, `target`, etc.). Source code is never touched.
+</details>
+
+<details>
+<summary>Does it work on Windows?</summary>
+
+Yes. It supports macOS, Windows, and Linux. Files are moved to each OS's native trash system.
+</details>
+
+## Contributing
+
+Issues and Pull Requests are welcome!
+
+1. Fork this repository
+2. Create a branch (`git checkout -b feature/your-feature`)
+3. Commit changes (`git commit -m 'feat: add something'`)
+4. Push (`git push origin feature/your-feature`)
+5. Open a Pull Request
 
 ## License
 
-[MIT](./LICENSE)
+[MIT](./LICENSE) © [ceasarXuu](https://github.com/ceasarXuu)
