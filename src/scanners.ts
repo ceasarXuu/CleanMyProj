@@ -1,16 +1,13 @@
-import * as path from 'path';
-import { CacheItem, ProjectInfo, ProjectType, ScanResult } from './types';
-import { dirExists, fileExists, getDirSize, formatSize } from './utils';
+import * as path from 'node:path';
+import fs from 'node:fs';
+import { type CacheItem, type ProjectInfo, type ProjectType, type ScanResult } from './types.js';
+import { dirExists, fileExists, getDirSize } from './utils.js';
 
-/**
- * Define all possible cache targets for each project type
- */
 interface CacheTarget {
   id: string;
   label: string;
   paths: (root: string) => string[];
   description: string;
-  /** Which project types this target applies to (empty = all) */
   types: ProjectType[];
 }
 
@@ -54,7 +51,6 @@ const CACHE_TARGETS: CacheTarget[] = [
     description: 'Global pnpm content-addressable store',
     types: [],
   },
-
   // === Next.js ===
   {
     id: 'next-cache',
@@ -63,7 +59,6 @@ const CACHE_TARGETS: CacheTarget[] = [
     description: 'Next.js build output and cache',
     types: ['nextjs'],
   },
-
   // === Nuxt ===
   {
     id: 'nuxt-cache',
@@ -72,7 +67,6 @@ const CACHE_TARGETS: CacheTarget[] = [
     description: 'Nuxt build output and generated files',
     types: ['nuxt'],
   },
-
   // === Vite ===
   {
     id: 'vite-cache',
@@ -81,7 +75,6 @@ const CACHE_TARGETS: CacheTarget[] = [
     description: 'Vite pre-bundling cache',
     types: ['vite', 'node'],
   },
-
   // === Gatsby ===
   {
     id: 'gatsby-cache',
@@ -90,19 +83,14 @@ const CACHE_TARGETS: CacheTarget[] = [
     description: 'Gatsby cache and public build output',
     types: ['gatsby'],
   },
-
   // === Angular ===
   {
     id: 'angular-cache',
     label: '.angular (Angular cache)',
-    paths: (r) => [
-      path.join(r, '.angular'),
-      path.join(r, 'dist'),
-    ],
+    paths: (r) => [path.join(r, '.angular'), path.join(r, 'dist')],
     description: 'Angular CLI build cache and dist output',
     types: ['angular'],
   },
-
   // === SvelteKit ===
   {
     id: 'svelte-cache',
@@ -111,7 +99,6 @@ const CACHE_TARGETS: CacheTarget[] = [
     description: 'SvelteKit generated files',
     types: ['svelte'],
   },
-
   // === Turbo ===
   {
     id: 'turbo-cache',
@@ -123,7 +110,6 @@ const CACHE_TARGETS: CacheTarget[] = [
     description: 'Turborepo local cache',
     types: [],
   },
-
   // === Webpack ===
   {
     id: 'webpack-cache',
@@ -132,7 +118,6 @@ const CACHE_TARGETS: CacheTarget[] = [
     description: 'Webpack, Babel, and other tool caches in node_modules',
     types: [],
   },
-
   // === TypeScript ===
   {
     id: 'tsbuildinfo',
@@ -141,7 +126,6 @@ const CACHE_TARGETS: CacheTarget[] = [
     description: 'TypeScript incremental build info',
     types: [],
   },
-
   // === ESLint ===
   {
     id: 'eslint-cache',
@@ -150,7 +134,6 @@ const CACHE_TARGETS: CacheTarget[] = [
     description: 'ESLint cache file',
     types: [],
   },
-
   // === dist / build output ===
   {
     id: 'dist-output',
@@ -166,7 +149,6 @@ const CACHE_TARGETS: CacheTarget[] = [
     description: 'Build output directory',
     types: ['node', 'angular'],
   },
-
   // === Python ===
   {
     id: 'python-pycache',
@@ -185,9 +167,7 @@ const CACHE_TARGETS: CacheTarget[] = [
   {
     id: 'pip-cache',
     label: 'pip cache',
-    paths: () => [
-      path.join(process.env.HOME || '', '.cache/pip'),
-    ],
+    paths: () => [path.join(process.env.HOME || '', '.cache/pip')],
     description: 'Global pip cache',
     types: ['python'],
   },
@@ -198,7 +178,6 @@ const CACHE_TARGETS: CacheTarget[] = [
     description: 'Python packaging metadata',
     types: ['python'],
   },
-
   // === Rust ===
   {
     id: 'rust-target',
@@ -217,78 +196,58 @@ const CACHE_TARGETS: CacheTarget[] = [
     description: 'Global Cargo registry and git cache',
     types: ['rust'],
   },
-
   // === Go ===
   {
     id: 'go-cache',
     label: 'go build cache',
-    paths: () => [
-      path.join(process.env.HOME || '', '.cache/go-build'),
-    ],
+    paths: () => [path.join(process.env.HOME || '', '.cache/go-build')],
     description: 'Go build cache',
     types: ['go'],
   },
   {
     id: 'go-mod-cache',
     label: 'go module cache',
-    paths: () => [
-      path.join(process.env.HOME || '', 'go/pkg/mod'),
-    ],
+    paths: () => [path.join(process.env.HOME || '', 'go/pkg/mod')],
     description: 'Go module cache',
     types: ['go'],
   },
-
   // === Flutter ===
   {
     id: 'flutter-build',
     label: 'Flutter build',
-    paths: (r) => [
-      path.join(r, 'build'),
-      path.join(r, '.dart_tool'),
-    ],
+    paths: (r) => [path.join(r, 'build'), path.join(r, '.dart_tool')],
     description: 'Flutter build output and Dart tool files',
     types: ['flutter'],
   },
   {
     id: 'flutter-cache',
     label: 'Flutter pub cache',
-    paths: () => [
-      path.join(process.env.HOME || '', '.pub-cache'),
-    ],
+    paths: () => [path.join(process.env.HOME || '', '.pub-cache')],
     description: 'Global Flutter/Dart pub cache',
     types: ['flutter'],
   },
-
   // === Java ===
   {
     id: 'gradle-cache',
     label: 'Gradle cache',
-    paths: () => [
-      path.join(process.env.HOME || '', '.gradle/caches'),
-    ],
+    paths: () => [path.join(process.env.HOME || '', '.gradle/caches')],
     description: 'Global Gradle cache',
     types: ['java'],
   },
   {
     id: 'maven-cache',
     label: 'Maven cache',
-    paths: () => [
-      path.join(process.env.HOME || '', '.m2/repository'),
-    ],
+    paths: () => [path.join(process.env.HOME || '', '.m2/repository')],
     description: 'Local Maven repository',
     types: ['java'],
   },
   {
     id: 'java-build',
     label: 'build (Java/Kotlin output)',
-    paths: (r) => [
-      path.join(r, 'build'),
-      path.join(r, 'target'),
-    ],
+    paths: (r) => [path.join(r, 'build'), path.join(r, 'target')],
     description: 'Gradle/Maven build output',
     types: ['java'],
   },
-
   // === Docker ===
   {
     id: 'docker-system',
@@ -299,15 +258,11 @@ const CACHE_TARGETS: CacheTarget[] = [
   },
 ];
 
-/**
- * Shallow-find directories matching a name under a root (max depth 3)
- */
 function findDirs(root: string, name: string, maxDepth = 3, currentDepth = 0): string[] {
   const results: string[] = [];
   if (currentDepth > maxDepth) return results;
 
   try {
-    const fs = require('fs');
     const entries = fs.readdirSync(root, { withFileTypes: true });
     for (const entry of entries) {
       if (entry.name === name && entry.isDirectory()) {
@@ -328,21 +283,17 @@ function findDirs(root: string, name: string, maxDepth = 3, currentDepth = 0): s
   return results;
 }
 
-/**
- * Scan project for all applicable cache items
- */
 export function scanProject(projectInfo: ProjectInfo): ScanResult {
   const items: CacheItem[] = [];
   const { type, rootPath } = projectInfo;
 
   for (const target of CACHE_TARGETS) {
-    // Check if this target applies to the detected project type
     if (target.types.length > 0 && !target.types.includes(type)) {
       continue;
     }
 
     const resolvedPaths = target.paths(rootPath).filter((p) => {
-      if (target.id === 'docker-system') return true; // Special case
+      if (target.id === 'docker-system') return true;
       if (target.id === 'npm-cache' || target.id === 'yarn-cache' || target.id === 'pnpm-store') {
         return dirExists(p);
       }
@@ -356,7 +307,6 @@ export function scanProject(projectInfo: ProjectInfo): ScanResult {
       totalSize += getDirSize(p);
     }
 
-    // Skip empty / zero-size items
     if (totalSize === 0 && target.id !== 'docker-system') continue;
 
     items.push({
@@ -369,14 +319,8 @@ export function scanProject(projectInfo: ProjectInfo): ScanResult {
     });
   }
 
-  // Sort by size descending
   items.sort((a, b) => b.size - a.size);
-
   const totalSize = items.reduce((sum, item) => sum + item.size, 0);
 
-  return {
-    projectInfo,
-    items,
-    totalSize,
-  };
+  return { projectInfo, items, totalSize };
 }

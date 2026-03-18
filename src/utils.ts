@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
 /**
  * Format bytes to human readable string (MB/GB)
@@ -14,7 +14,6 @@ export function formatSize(bytes: number): string {
   const size = bytes / Math.pow(k, i);
 
   if (i < 2) {
-    // Less than 1 MB, show as KB
     return `${size.toFixed(1)} ${units[i]}`;
   }
   return `${size.toFixed(2)} ${units[i]}`;
@@ -35,10 +34,7 @@ export function getDirSize(dirPath: string): number {
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
       try {
-        if (entry.isSymbolicLink()) {
-          // Skip symlinks to avoid cycles
-          continue;
-        }
+        if (entry.isSymbolicLink()) continue;
         if (entry.isDirectory()) {
           totalSize += getDirSize(fullPath);
         } else {
@@ -54,9 +50,6 @@ export function getDirSize(dirPath: string): number {
   return totalSize;
 }
 
-/**
- * Check if a path exists and is a directory
- */
 export function dirExists(p: string): boolean {
   try {
     return fs.existsSync(p) && fs.statSync(p).isDirectory();
@@ -65,9 +58,6 @@ export function dirExists(p: string): boolean {
   }
 }
 
-/**
- * Check if a file exists
- */
 export function fileExists(p: string): boolean {
   try {
     return fs.existsSync(p) && fs.statSync(p).isFile();
@@ -76,19 +66,13 @@ export function fileExists(p: string): boolean {
   }
 }
 
-/**
- * Color a size string based on how large it is
- */
 export function colorSize(sizeStr: string, bytes: number): string {
-  if (bytes >= 1024 * 1024 * 1024) return chalk.red.bold(sizeStr); // >= 1GB
-  if (bytes >= 100 * 1024 * 1024) return chalk.yellow.bold(sizeStr); // >= 100MB
-  if (bytes >= 10 * 1024 * 1024) return chalk.yellow(sizeStr); // >= 10MB
+  if (bytes >= 1024 * 1024 * 1024) return chalk.red.bold(sizeStr);
+  if (bytes >= 100 * 1024 * 1024) return chalk.yellow.bold(sizeStr);
+  if (bytes >= 10 * 1024 * 1024) return chalk.yellow(sizeStr);
   return chalk.green(sizeStr);
 }
 
-/**
- * Sleep for given ms
- */
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

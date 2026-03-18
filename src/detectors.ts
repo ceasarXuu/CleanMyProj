@@ -1,23 +1,18 @@
-import * as path from 'path';
-import { ProjectInfo, ProjectType } from './types';
-import { fileExists, dirExists } from './utils';
+import * as path from 'node:path';
+import fs from 'node:fs';
+import { type ProjectInfo, type ProjectType } from './types.js';
+import { fileExists, dirExists } from './utils.js';
 
-/**
- * Detect the type of project in the given directory
- */
 export function detectProject(rootPath: string): ProjectInfo {
   const frameworks: string[] = [];
   let detectedType: ProjectType = 'unknown';
 
-  // Check package.json for Node.js ecosystem projects
   const pkgPath = path.join(rootPath, 'package.json');
   if (fileExists(pkgPath)) {
     detectedType = 'node';
 
     try {
-      const pkg = JSON.parse(
-        require('fs').readFileSync(pkgPath, 'utf-8')
-      );
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
       const allDeps = {
         ...pkg.dependencies,
         ...pkg.devDependencies,
@@ -69,32 +64,26 @@ export function detectProject(rootPath: string): ProjectInfo {
     }
   }
 
-  // Python
   if (
     fileExists(path.join(rootPath, 'requirements.txt')) ||
     fileExists(path.join(rootPath, 'pyproject.toml')) ||
     fileExists(path.join(rootPath, 'setup.py')) ||
     fileExists(path.join(rootPath, 'Pipfile'))
   ) {
-    if (detectedType === 'unknown') {
-      detectedType = 'python';
-    }
+    if (detectedType === 'unknown') detectedType = 'python';
     frameworks.push('Python');
   }
 
-  // Rust
   if (fileExists(path.join(rootPath, 'Cargo.toml'))) {
     detectedType = 'rust';
     frameworks.push('Rust');
   }
 
-  // Go
   if (fileExists(path.join(rootPath, 'go.mod'))) {
     detectedType = 'go';
     frameworks.push('Go');
   }
 
-  // Java/Gradle/Maven
   if (
     fileExists(path.join(rootPath, 'pom.xml')) ||
     fileExists(path.join(rootPath, 'build.gradle')) ||
@@ -104,13 +93,11 @@ export function detectProject(rootPath: string): ProjectInfo {
     frameworks.push('Java');
   }
 
-  // Flutter
   if (fileExists(path.join(rootPath, 'pubspec.yaml'))) {
     detectedType = 'flutter';
     frameworks.push('Flutter');
   }
 
-  // Docker
   if (
     fileExists(path.join(rootPath, 'Dockerfile')) ||
     fileExists(path.join(rootPath, 'docker-compose.yml')) ||
@@ -119,7 +106,6 @@ export function detectProject(rootPath: string): ProjectInfo {
     frameworks.push('Docker');
   }
 
-  // Turborepo / Monorepo
   if (fileExists(path.join(rootPath, 'turbo.json'))) {
     frameworks.push('Turborepo');
   }
