@@ -40,7 +40,7 @@ npm install -g cleanmyproj
 Run in any project root directory:
 
 ```bash
-cmp
+cmpj
 ```
 
 ### Example Output
@@ -68,10 +68,10 @@ cmp
 ### Commands
 
 ```bash
-cmp                     # Current dir: scan → select → clean
-cmp /path/to/project    # Specify project path
-cmp --check             # Scan only, no interactive cleanup
-cmp --yes               # Skip confirmation, clean immediately
+cmpj                     # Current dir: scan → select → clean
+cmpj /path/to/project    # Specify project path
+cmpj --check             # Scan only, no interactive cleanup
+cmpj --yes               # Skip confirmation, clean immediately
 ```
 
 ### Controls
@@ -126,7 +126,7 @@ Yes. All deletions are actually "move to trash" operations. Open your system's t
 <details>
 <summary>Does it support monorepos?</summary>
 
-Yes. Run `cmp` at the monorepo root and it will scan all sub-project caches.
+Yes. Run `cmpj` at the monorepo root and it will scan all sub-project caches.
 </details>
 
 <details>

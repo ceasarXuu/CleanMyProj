@@ -1,11 +1,11 @@
 {
   "name": "cleanmyproj",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "description": "CLI tool to clean project caches and free up local storage",
   "exports": "./dist/index.js",
   "bin": {
-    "cmp": "bin/cmp.js"
+    "cmpj": "bin/cmpj.js"
   },
   "files": [
     "dist",

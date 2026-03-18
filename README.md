@@ -40,7 +40,7 @@ npm install -g cleanmyproj
 在任意项目根目录下执行：
 
 ```bash
-cmp
+cmpj
 ```
 
 ### 典型输出
@@ -68,10 +68,10 @@ cmp
 ### 命令
 
 ```bash
-cmp                     # 当前目录：扫描 → 交互选择 → 清理
-cmp /path/to/project    # 指定项目路径
-cmp --check             # 只看结果，不执行清理
-cmp --yes               # 跳过确认直接清理（谨慎使用）
+cmpj                     # 当前目录：扫描 → 交互选择 → 清理
+cmpj /path/to/project    # 指定项目路径
+cmpj --check             # 只看结果，不执行清理
+cmpj --yes               # 跳过确认直接清理（谨慎使用）
 ```
 
 ### 操作说明
@@ -126,7 +126,7 @@ cmp --yes               # 跳过确认直接清理（谨慎使用）
 <details>
 <summary>支持 monorepo 吗？</summary>
 
-支持。在 monorepo 根目录运行 `cmp`，会扫描所有子项目的缓存。
+支持。在 monorepo 根目录运行 `cmpj`，会扫描所有子项目的缓存。
 </details>
 
 <details>
