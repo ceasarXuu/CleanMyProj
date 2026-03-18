@@ -11,6 +11,8 @@ export interface CacheItem {
   projectType: ProjectType;
   /** Brief description of what this cache is */
   description: string;
+  /** Impact of cleaning: what will happen after deletion */
+  impact: string;
 }
 
 export type ProjectType =

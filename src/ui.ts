@@ -55,7 +55,7 @@ export async function selectItemsToClean(
       checked: false,
     },
     ...items.map((item) => ({
-      name: `  ${chalk.white(item.label.padEnd(40))} ${colorSize(formatSize(item.size).padStart(10), item.size)}  ${chalk.gray(item.description)}`,
+      name: `  ${chalk.white(item.label.padEnd(40))} ${colorSize(formatSize(item.size).padStart(10), item.size)}\n      ${chalk.gray('▸ ' + item.description)}\n      ${chalk.dim('⚠ ' + item.impact)}`,
       value: item.id,
       checked: false,
     })),
@@ -87,6 +87,7 @@ export async function confirmCleanup(selectedItems: CacheItem[]): Promise<boolea
     console.log(
       chalk.white(`    • ${item.label} `) + colorSize(formatSize(item.size), item.size)
     );
+    console.log(chalk.dim(`      ⚠ ${item.impact}`));
   }
 
   console.log(chalk.gray('  ' + '─'.repeat(50)));

@@ -17,9 +17,9 @@ import { formatSize } from './utils.js';
 const program = new Command();
 
 program
-  .name('cmp')
+  .name('cmpj')
   .description('CleanMyProj — 项目缓存清理工具，释放本地存储空间')
-  .version('1.2.0')
+  .version('1.3.0')
   .argument('[path]', '项目路径（默认为当前目录）')
   .option('-c, --check', '仅检查缓存占用，不进入交互模式')
   .option('-y, --yes', '跳过确认直接清理（危险操作，请谨慎使用）')
