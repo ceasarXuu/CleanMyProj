@@ -1,0 +1,42 @@
+{
+  "name": "cleanmyproj",
+  "version": "1.0.0",
+  "description": "CLI tool to clean project caches and free up local storage",
+  "main": "dist/index.js",
+  "bin": {
+    "cmp": "bin/cmp.js"
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "clean",
+    "cache",
+    "disk-space",
+    "developer-tools",
+    "cli"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^11.1.0",
+    "inquirer": "^8.2.6",
+    "ora": "^5.4.1",
+    "trash": "^8.0.0"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
